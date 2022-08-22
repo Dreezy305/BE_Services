@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  dev-db:
+    image: mongodb
+    ports: 5432
+    environment:
+      POSTGRES_USER: gsxmrtopjhyzpl
+      POSTGRES_PASSWORD: 000c0d09953a77672f93b8bac143699b90a4da2203c081b3af4e60df69f14a95
+      POSTGRES_DB: d697s76tri6h3u
+    networks:
+      - amazon.aws
+networks: amazon.aws
