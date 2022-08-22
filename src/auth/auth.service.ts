@@ -55,7 +55,17 @@ export class AuthService {
     }
 
     // compare password
+    const pwdMatch = argon.verify((await user).hash, dto.password);
+
     // if password incorrect, throw exception
-    return { msg: 'signin' };
+    if (!pwdMatch) {
+      throw new ForbiddenException('credentials incorrect');
+    }
+
+    return {
+      success: true,
+      data: user,
+      message: 'account created successfully',
+    };
   }
 }
