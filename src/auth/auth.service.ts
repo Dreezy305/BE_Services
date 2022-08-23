@@ -1,12 +1,18 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthDto } from './dto';
+import { AuthDto, LoginDto } from './dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
 
   async signup(dto: AuthDto) {
     // connect to mongo
@@ -41,21 +47,22 @@ export class AuthService {
     }
   }
 
-  async signin(dto: AuthDto) {
+  async signin(dto: LoginDto) {
     await this.prisma.$connect();
     // find the user by email
-    const user = this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: {
         email: dto.email,
       },
     });
+
     // if user does not exist throw exception
     if (!user) {
       throw new ForbiddenException('credentials incorrect');
     }
 
     // compare password
-    const pwdMatch = argon.verify((await user).hash, dto.password);
+    const pwdMatch = await argon.verify(user.hash, dto.password);
 
     // if password incorrect, throw exception
     if (!pwdMatch) {
@@ -68,6 +75,14 @@ export class AuthService {
       message: 'account created successfully',
     };
   }
+
+  async signToken(email: string, userId: number) {
+    const payload = { sub: userId, email };
+
+    const secret = this.configService.get('JWT_SECRET');
+
+    return this.jwtService.signAsync(payload, { expiresIn: '15m', secret });
+  }
 }
 
-// 1:20:43
+// 1:46:01
