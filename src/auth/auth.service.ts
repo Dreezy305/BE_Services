@@ -69,19 +69,27 @@ export class AuthService {
       throw new ForbiddenException('credentials incorrect');
     }
 
-    return {
-      success: true,
-      data: user,
-      message: 'account created successfully',
-    };
+    // return {
+    //   success: true,
+    //   data: this.signToken(user.id, user.email),
+    //   message: 'account created successfully',
+    // };
+    return this.signToken(user.id, user.email);
   }
 
-  async signToken(email: string, userId: number) {
+  async signToken(
+    userId: string,
+    email: string,
+  ): Promise<{ accessToken: string }> {
     const payload = { sub: userId, email };
 
     const secret = this.configService.get('JWT_SECRET');
 
-    return this.jwtService.signAsync(payload, { expiresIn: '15m', secret });
+    const token = await this.jwtService.signAsync(payload, {
+      expiresIn: '15m',
+      secret: secret,
+    });
+    return { accessToken: token };
   }
 }
 
