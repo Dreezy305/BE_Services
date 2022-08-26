@@ -74,14 +74,23 @@ export class AuthService {
     //   data: this.signToken(user.id, user.email),
     //   message: 'account created successfully',
     // };
-    return this.signToken(user.id, user.email);
+    return this.signToken(
+      user.id,
+      user.email,
+      user.firstName,
+      user.lastName,
+      user.createdAt,
+    );
   }
 
   async signToken(
     userId: string,
     email: string,
+    firstName: string,
+    lastName: string,
+    createdAt: Date,
   ): Promise<{ accessToken: string }> {
-    const payload = { sub: userId, email };
+    const payload = { sub: userId, email, firstName, lastName, createdAt };
 
     const secret = this.configService.get('JWT_SECRET');
 
