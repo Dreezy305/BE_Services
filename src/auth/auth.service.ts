@@ -100,4 +100,8 @@ export class AuthService {
     });
     return { accessToken: token };
   }
+
+  async getAllUsers() {
+    console.log('all users');
+  }
 }
