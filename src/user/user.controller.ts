@@ -12,11 +12,16 @@ export class UserController {
     return user;
   }
 
+  // gets a sigle user wit ID
   @Get('singleUser/:id')
-  getSingleUser(@GetUser('id') id: string) {
-    console.log(id);
-    return id;
+  getSingleUser(
+    @GetUser('id') id: string,
+    @GetUser('email') email: string,
+    @GetUser('firstName') firstName: string,
+    @GetUser('lastName') lastName: string,
+  ) {
+    return { id, email, firstName, lastName };
   }
 }
 
-// 2:05:08 (guards)
+// 2:18:55 (guards)
