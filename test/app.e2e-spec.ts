@@ -30,7 +30,7 @@ describe('App e2e', () => {
   describe('Auth', () => {
     describe('Signup', () => {
       const dto: AuthDto = {
-        email: 'idris.bankole+9@gmail.com',
+        email: 'idris.bankole+11@gmail.com',
         password: 'password',
         firstName: 'idris',
         lastName: 'bankole',
@@ -65,8 +65,7 @@ describe('App e2e', () => {
           .spec()
           .post('/auth/signup')
           .withBody(dto)
-          .expectStatus(201)
-          .stores('userid', 'id');
+          .expectStatus(201);
       });
     });
 
@@ -112,17 +111,16 @@ describe('App e2e', () => {
   });
 
   describe('User', () => {
-    describe('Get me', () => {
-      it('should get user by id', () => {
-        return pactum
-          .spec()
-          .get('users/singleUser/:id')
-          .withHeaders({ Authorization: 'Bearer $S{userAccessToken}' })
-          .withQueryParams(`$S{id}`)
-          .expectStatus(200)
-          .inspect();
-      });
-    });
+    // describe('Get me', () => {
+    //   it('should get user by id', () => {
+    //     return pactum
+    //       .spec()
+    //       .get('users/singleUser/:id')
+    //       .withHeaders({ Authorization: 'Bearer $S{userAccessToken}' })
+    //       .expectStatus(200)
+    //       .inspect();
+    //   });
+    // });
 
     describe('Edit user', () => {});
   });
@@ -134,13 +132,10 @@ describe('App e2e', () => {
 
     describe('Get boookmark by id', () => {});
 
-    describe('Edit boookmark', () => {});
+    describe('Edit boookmark by id', () => {});
 
-    describe('Delete boookmark', () => {});
+    describe('Delete boookmark by id', () => {});
   });
 });
 
-function $S($S: any, arg1: { id: any }) {
-  throw new Error('Function not implemented.');
-}
-// 3:04:03
+// 3:05:08
