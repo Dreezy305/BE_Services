@@ -2,6 +2,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as pactum from 'pactum';
 import { AuthDto, LoginDto } from 'src/auth/dto';
+import { EditUserDto } from 'src/user/dto';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 
@@ -30,7 +31,7 @@ describe('App e2e', () => {
   describe('Auth', () => {
     describe('Signup', () => {
       const dto: AuthDto = {
-        email: 'idris.bankole+11@gmail.com',
+        email: 'idris.bankole+13@gmail.com',
         password: 'password',
         firstName: 'idris',
         lastName: 'bankole',
@@ -61,17 +62,21 @@ describe('App e2e', () => {
       });
 
       it('should sign up', () => {
-        return pactum
-          .spec()
-          .post('/auth/signup')
-          .withBody(dto)
-          .expectStatus(201);
+        // return pactum
+        //   .spec()
+        //   .post('/auth/signup')
+        //   .withBody(dto)
+        //   .expectStatus(201)
+        //   .expectBodyContains(dto.email)
+        //   .expectBodyContains(dto.firstName)
+        //   .expectBodyContains(dto.lastName)
+        //   .expectBodyContains(dto.password);
       });
     });
 
     describe('Signin', () => {
       const dto: LoginDto = {
-        email: 'idris.bankole+5@gmail.com',
+        email: 'idris.bankole+13@gmail.com',
         password: 'password',
       };
 
@@ -105,24 +110,42 @@ describe('App e2e', () => {
           .post('/auth/signin')
           .withBody(dto)
           .expectStatus(200)
+          .expectBodyContains('accessToken')
           .stores('userAccessToken', 'accessToken');
       });
     });
   });
 
   describe('User', () => {
-    // describe('Get me', () => {
-    //   it('should get user by id', () => {
-    //     return pactum
-    //       .spec()
-    //       .get('users/singleUser/:id')
-    //       .withHeaders({ Authorization: 'Bearer $S{userAccessToken}' })
-    //       .expectStatus(200)
-    //       .inspect();
-    //   });
-    // });
+    describe('Get users', () => {
+      it('should get all user', () => {
+        return pactum
+          .spec()
+          .get('/users')
+          .withHeaders({ Authorization: 'Bearer $S{userAccessToken}' })
+          .expectStatus(200);
+      });
+    });
 
-    describe('Edit user', () => {});
+    describe('Edit user', () => {
+      it('should edit user by id', () => {
+        const dto: EditUserDto = {
+          email: 'idris.bankole+pactum@gmail.com',
+          firstName: 'idris-pactum-test',
+          lastName: 'bankole-pactum-test',
+        };
+        return pactum
+          .spec()
+          .get('/users/editUser')
+          .withBody(dto)
+          .withHeaders({ Authorization: 'Bearer $S{userAccessToken}' })
+          .expectStatus(200)
+          .expectBodyContains(dto.firstName)
+          .expectBodyContains(dto.lastName)
+          .expectBodyContains(dto.email)
+          .inspect();
+      });
+    });
   });
 
   describe('Bookmarks', () => {
