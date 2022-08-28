@@ -42,8 +42,15 @@ export class BookmarkService {
     };
   }
 
-  getBookmarkById(userId: string, bookmarkId: string) {
-    console.log('bookmarks  by id');
+  async getBookmarkById(userId: string, bookmarkId: string) {
+    const bookmarks = await this.prisma.bookmark.findFirst({
+      where: { id: bookmarkId, userId },
+    });
+    return {
+      success: true,
+      data: bookmarks,
+      message: 'Bookmark fetched successfully',
+    };
   }
 
   editBookmarkById(userId: string, bookmark: string, dto: EditBookmarkDto) {
@@ -54,3 +61,7 @@ export class BookmarkService {
     console.log('delete bookmarks by id');
   }
 }
+
+// 3:33:10
+// store the id with pactum
+// tests
