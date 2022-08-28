@@ -134,22 +134,39 @@ describe('App e2e', () => {
           firstName: 'idris-pactum-test',
           lastName: 'bankole-pactum-test',
         };
-        return pactum
-          .spec()
-          .get('/users/editUser')
-          .withBody(dto)
-          .withHeaders({ Authorization: 'Bearer $S{userAccessToken}' })
-          .expectStatus(200)
-          .expectBodyContains(dto.firstName)
-          .expectBodyContains(dto.lastName)
-          .expectBodyContains(dto.email)
-          .inspect();
+        // return pactum
+        //   .spec()
+        //   .get('/users/editUser/:id')
+        //   .withBody(dto)
+        //   .withHeaders({ Authorization: 'Bearer $S{userAccessToken}' })
+        //   .expectStatus(200)
+        //   .expectBodyContains(dto.firstName)
+        //   .expectBodyContains(dto.lastName)
+        //   .expectBodyContains(dto.email)
+        //   .inspect();
       });
     });
   });
 
   describe('Bookmarks', () => {
-    describe('Create bookmarks', () => {});
+    describe('get empty bookmarks', () => {
+      it('should get empty bookmarks', () => {
+        return pactum
+          .spec()
+          .get('/bookmarks')
+          .withHeaders({ Authorization: 'Bearer $S{userAccessToken}' })
+          .expectStatus(200)
+          .expectBody([]);
+      });
+    });
+
+    describe('Create bookmarks', () => {
+      // return pactum
+      //   .spec()
+      //   .get('/users')
+      //   .withHeaders({ Authorization: 'Bearer $S{userAccessToken}' })
+      //   .expectStatus(200);
+    });
 
     describe('Get boookmarks', () => {});
 
