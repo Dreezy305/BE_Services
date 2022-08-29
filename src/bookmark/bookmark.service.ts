@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateBookmarkDto, EditBookmarkDto } from './dto';
 
@@ -44,7 +44,7 @@ export class BookmarkService {
 
   async getBookmarkById(userId: string, bookmarkId: string) {
     const bookmarks = await this.prisma.bookmark.findFirst({
-      where: { id: bookmarkId, userId },
+      where: { userId, id: bookmarkId },
     });
     return {
       success: true,
@@ -53,12 +53,53 @@ export class BookmarkService {
     };
   }
 
-  editBookmarkById(userId: string, bookmark: string, dto: EditBookmarkDto) {
-    console.log('edit bookmarks by id');
+  async editBookmarkById(
+    userId: string,
+    bookmarkId: string,
+    dto: EditBookmarkDto,
+  ) {
+    // get the bookmark by ID
+    const bookmark = await this.prisma.bookmark.findUnique({
+      where: { id: bookmarkId },
+    });
+
+    if (!bookmark || bookmark.userId !== userId) {
+      throw new ForbiddenException('Access to resource denied');
+    }
+    const edited = await this.prisma.bookmark.update({
+      where: {
+        id: bookmarkId,
+      },
+      data: { ...dto },
+    });
+
+    return {
+      status: true,
+      data: edited,
+      message: 'Bookmark edited successfully',
+    };
   }
 
-  deleteBookmarkById(userId: string, bookmarkId: string) {
-    console.log('delete bookmarks by id');
+  async deleteBookmarkById(userId: string, bookmarkId: string) {
+    // get the bookmark by ID
+    const bookmark = await this.prisma.bookmark.findUnique({
+      where: { id: bookmarkId },
+    });
+
+    if (!bookmark || bookmark.userId !== userId) {
+      throw new ForbiddenException('Access to resource denied');
+    }
+    const deleted = await this.prisma.bookmark.delete({
+      where: {
+        id: bookmarkId,
+      },
+    });
+
+    return {
+      status: true,
+      data: deleted,
+      message: 'Bookmark deleted successfully',
+    };
   }
 }
 
